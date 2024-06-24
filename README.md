@@ -1,50 +1,47 @@
-# Welcome to your Expo app 👋
+# Tugas Akhir Movie App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Jadwal 
 
-## Get started
 
-1. Install dependencies
+## Requirement 
 
-   ```bash
-   npm install
-   ```
+- Expo ( Mobile App ) | Tsx atau js 
+- Aplikasi bisa dijalankan diatas website. kecuali pengguna snack expo. 
+- 3 Screen ( Home, Search, Favorite )
+- Home: menampilkan list Movie 
+- Search: Pencarian Movie 
+- Favorite: Favorite Movie 
+- Pada Home user bisa click movie!, berpindah screen. (Push)
+- Github repository individu atau snack expo
 
-2. Start the app
+- Presentasi. Tidak wajib dalam kondisi project sudah selesai.
+- Presentasi bisa Kelompok atau per-orangan.
 
-   ```bash
-    npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Format Presentasi
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Pengenalan 
+- Tujuan dan fitur 
+- Spesifikasi (component atau module apa saja yang digunakan)
+- Tahapan pengerjaan 
+- Kendala apa saja yang dihapi 
+- Kesimpulan
 
-## Get a fresh project
 
-When you're ready, run:
+- Presentasi dilakukan pada hari rabu dan kamis
 
-```bash
-npm run reset-project
+
+## Jika ingin coba ini
+
+- install package
+```
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- lakukan modifikasi Api, dan NavigationContainer
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- jalankan
+```
+npm run web
+```

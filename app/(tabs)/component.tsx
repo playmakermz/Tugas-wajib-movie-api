@@ -7,84 +7,83 @@ import { useNavigation, StackActions,useFocusEffect } from '@react-navigation/na
 import {styles} from './style'
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import basicApi from './ApiBasic.json'
+import listAPI from './foundBasic.json'
 
-const coverImageSize = {
-  backdrop: {
-    width: 280,
-    height: 160,
-  },
-  poster: {
-    width: 100,
-    height: 160,
-  },
+
+//export {MovieDetail, MovieList}
+
+let Stack = createNativeStackNavigator()
+
+let coverImageSize = {
+    backdrop: {
+        width: 280,
+        height: 160,
+    },
+    poster: {
+        width: 100,
+        height: 160,
+    },
 }
 
-const Stack = createNativeStackNavigator();
+function MovieList({title, path, coverType}){
+    let [movies, setMovies] = useState([basicApi])
 
-function MovieList({ title, path, coverType }){
-  const [movies, setMovies] = useState([basicApi])
+    useEffect(() => {
+        const url = `https://api.themoviedb.org/3/${path}`
+        const options = {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_ACCESS_TOKEN}`,
+          },
+        }
+        fetch(url, options)
+        .then(async (response) => await response.json())
+        .then((response) => {
+          setMovies(response.results)
+          
+        })
+        .catch((errorResponse) => {
+          console.log(errorResponse)
+        })
+  
+    console.log(movies)
+    }, [])
 
-  useEffect(() => {
-      const url = `https://api.themoviedb.org/3/${path}`
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${API_ACCESS_TOKEN}`,
-        },
-      }
-      fetch(url, options)
-      .then(async (response) => await response.json())
-      .then((response) => {
-        setMovies(response.results)
-        
-      })
-      .catch((errorResponse) => {
-        console.log(errorResponse)
-      })
+    return(
+        <View>
+             <View style={styles.header}>
+            <View style={styles.purpleLabel}></View>
+            <Text style={styles.title}>{title}</Text>
+          </View>
 
-  console.log(movies)
-  }, [])
+          <FlatList
+        style={{
+          ...styles.movieList,
+          maxHeight: 160,
+        }}
+        showsHorizontalScrollIndicator={true}
+        horizontal 
+        data={movies}
+        renderItem={({ item }) => (
 
-  return (
-      <View>
-        <View style={styles.header}>
-          <View style={styles.purpleLabel}></View>
-          <Text style={styles.title}>{title}</Text>
+            <MovieItem 
+                movie={item}
+                size={coverImageSize[coverType]}
+                coverType={coverType}
+            />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
         </View>
-
-        <FlatList
-      style={{
-        ...styles.movieList,
-        maxHeight: 160,
-      }}
-      showsHorizontalScrollIndicator={true}
-      horizontal 
-      data={movies}
-      renderItem={({ item }) => (
-
-        <MovieItem
-          movie={item}
-          size={coverImageSize[coverType]}
-          coverType={coverType}
-        />
-
-      )}
-      keyExtractor={(item) => item.id.toString()}
-    />
-
-      </View>
     )
 }
 
-// ======================== MovieItem ==================
-function MovieItem({ movie, size, coverType }){
-    const navigation = useNavigation()
-    const pushAction = StackActions.push('MovieDetail', { id: movie.id, poster_path: movie.poster_path, overview: movie.overview, title: movie.title})
-    return (
-        <TouchableOpacity onPress={() => {
-            navigation.dispatch(pushAction)
-          }}>
+// ======================= movieItem() =======================
+function MovieItem({movie, size, coverType}){
+    let navigation = useNavigation()
+    return(
+        <TouchableOpacity onPress={() => navigation.dispatch(StackActions.push('MovieDetail', {id: movie.id, poster_path: movie.poster_path, overview: movie.overview, title: movie.title}))}>
           <ImageBackground
             resizeMode="cover"
             style={[size, styles.backgroundImage]}
@@ -108,39 +107,38 @@ function MovieItem({ movie, size, coverType }){
             </LinearGradient>
           </ImageBackground>
         </TouchableOpacity>
+    )
+
+}
+
+// =================================== MovieDetail ==============
+
+function MovieDetail({route}) {
+    let {id, poster_path, overview, title} = route.params
+
+    return (
+      
+        <View
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: 32,
+      }}
+    >
+          <Image
+        style={styles.responsiveImg}
+        source={{
+          uri: `https://image.tmdb.org/t/p/w500${poster_path}`,
+        }}
+      />
+
+      <Text style={{ fontSize: 30 }}>Movie ID: {id}</Text>
+      <Text style={{ fontSize: 30 }}>Movie ID: {title}</Text>
+      <Text style={{ fontSize: 18 }}>Movie ID: {overview}</Text>
+    </View>
+    
       )
 }
 
-// =================== MovieDetail =======================
-function MovieDetail({ route }){
-  const { id } = route.params
-  const  {poster_path}  = route.params 
-  const {overview} = route.params
-  const {title} = route.params
-  console.log(`Halo saya adalah ${route} dan ${poster_path}`)
 
-  return (
-    
-      <View
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      marginTop: 32,
-    }}
-  >
-        <Image
-      style={styles.responsiveImg}
-      source={{
-        uri: `https://image.tmdb.org/t/p/w500${poster_path}`,
-      }}
-    />
-
-    <Text style={{ fontSize: 30 }}>Movie ID: {id}</Text>
-    <Text style={{ fontSize: 30 }}>Movie Title: {title}</Text>
-    <Text style={{ fontSize: 18 }}>Movie OverView: {overview}</Text>
-  </View>
-  
-    )
-}
-
-export {MovieDetail, MovieList}
+export {MovieList, MovieDetail}

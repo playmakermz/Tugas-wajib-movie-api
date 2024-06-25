@@ -9,7 +9,7 @@
 - Aplikasi bisa dijalankan diatas website. kecuali pengguna snack expo. 
 - 3 Screen ( Home, Search, Favorite )
 - Home: menampilkan list Movie 
-- Search: Pencarian Movie 
+- Search: Pencarian Movie ( Minimal satu search "keyword", "Category" adalah optional )
 - Favorite: Favorite Movie 
 - Pada Home user bisa click movie!, berpindah screen. (Push)
 - Github repository individu atau snack expo

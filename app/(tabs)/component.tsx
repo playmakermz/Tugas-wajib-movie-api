@@ -7,26 +7,24 @@ import { useNavigation, StackActions,useFocusEffect } from '@react-navigation/na
 import {styles} from './style'
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import basicApi from './ApiBasic.json'
-import listAPI from './foundBasic.json'
+import { Feather } from '@expo/vector-icons'
 
+const Stack = createNativeStackNavigator();
 
-//export {MovieDetail, MovieList}
-
-let Stack = createNativeStackNavigator()
-
-let coverImageSize = {
+const coverImageSize = {
     backdrop: {
-        width: 280,
-        height: 160,
+      width: 280,
+      height: 160,
     },
     poster: {
-        width: 100,
-        height: 160,
+      width: 100,
+      height: 160,
     },
 }
 
-function MovieList({title, path, coverType}){
-    let [movies, setMovies] = useState([basicApi])
+// ================== MovieList() ===================
+function MovieList({ title, path, coverType }){
+    const [movies, setMovies] = useState([basicApi])
 
     useEffect(() => {
         const url = `https://api.themoviedb.org/3/${path}`
@@ -50,9 +48,9 @@ function MovieList({title, path, coverType}){
     console.log(movies)
     }, [])
 
-    return(
+    return (
         <View>
-             <View style={styles.header}>
+          <View style={styles.header}>
             <View style={styles.purpleLabel}></View>
             <Text style={styles.title}>{title}</Text>
           </View>
@@ -67,23 +65,28 @@ function MovieList({title, path, coverType}){
         data={movies}
         renderItem={({ item }) => (
 
-            <MovieItem 
-                movie={item}
-                size={coverImageSize[coverType]}
-                coverType={coverType}
-            />
+          <MovieItem
+            movie={item}
+            size={coverImageSize[coverType]}
+            coverType={coverType}
+          />
+
         )}
         keyExtractor={(item) => item.id.toString()}
       />
+
         </View>
-    )
+      )
 }
 
-// ======================= movieItem() =======================
-function MovieItem({movie, size, coverType}){
-    let navigation = useNavigation()
-    return(
-        <TouchableOpacity onPress={() => navigation.dispatch(StackActions.push('MovieDetail', {id: movie.id, poster_path: movie.poster_path, overview: movie.overview, title: movie.title}))}>
+// ======================== MovieItem ==================
+function MovieItem({ movie, size, coverType }){
+    const navigation = useNavigation()
+    const pushAction = StackActions.push('MovieDetail', { id: movie.id, poster_path: movie.poster_path, overview: movie.overview, title: movie.title})
+    return (
+        <TouchableOpacity onPress={() => {
+            navigation.dispatch(pushAction)
+          }}>
           <ImageBackground
             resizeMode="cover"
             style={[size, styles.backgroundImage]}
@@ -107,14 +110,18 @@ function MovieItem({movie, size, coverType}){
             </LinearGradient>
           </ImageBackground>
         </TouchableOpacity>
-    )
-
+      )
 }
 
-// =================================== MovieDetail ==============
+// =================== MovieDetail =======================
+function MovieDetail({ route }){
+    const { id } = route.params
+    const  {poster_path}  = route.params 
+    const {overview} = route.params
+    const {title} = route.params
+    const {fav, setFav} = route.params // App container
+    console.log(`Halo saya adalah ${route} dan ${poster_path}`)
 
-function MovieDetail({route}) {
-    let {id, poster_path, overview, title} = route.params
 
     return (
       
@@ -133,12 +140,15 @@ function MovieDetail({route}) {
       />
 
       <Text style={{ fontSize: 30 }}>Movie ID: {id}</Text>
-      <Text style={{ fontSize: 30 }}>Movie ID: {title}</Text>
-      <Text style={{ fontSize: 18 }}>Movie ID: {overview}</Text>
+      <Text style={{ fontSize: 30 }}>Movie title : {title}</Text>
+      <Text style={{ fontSize: 18 }}>Movie Overview: {overview}</Text>
+
+      <TouchableOpacity onPress={() => {setFav([...fav, {title: title, overview: overview, id: id}])}}>
+      <Feather name="heart" size={28} color={"red"} />
+      </TouchableOpacity>
     </View>
     
       )
 }
 
-
-export {MovieList, MovieDetail}
+export {MovieDetail, MovieList}

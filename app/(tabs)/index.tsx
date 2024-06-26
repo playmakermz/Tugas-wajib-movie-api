@@ -4,18 +4,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {styles} from './style'
 import { Feather } from '@expo/vector-icons'
-//import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { MovieList, MovieDetail } from "./component";
 import foundBasic from './foundBasic.json'
 import {API_ACCESS_TOKEN, API_KEY} from './constant'
-import { StackActions, useNavigation } from "@react-navigation/native";
-import { ScrollView } from "react-native-gesture-handler";
 
 const Tab = createBottomTabNavigator() // Tab Navigator 
 const Stack = createNativeStackNavigator(); // Button Navigator
 
-
-function Home({navigation}){
+function Home(){
 
   let movieLists = [
     {
@@ -43,34 +40,41 @@ function Home({navigation}){
 
   return(
     <ScrollView showsVerticalScrollIndicator={true}>
-      <View>
+    <View>
       {movieLists.map((item) => (
-        <MovieList
-          title={item.title}
-          path={item.path}
-          coverType={item.coverType}
-          key={item.title}
-        />
+<MovieList 
+title={item.title}
+path={item.path}
+coverType={item.coverType}
+key={item.title}
+/> 
+      
       ))}
     </View>
     </ScrollView>
   )
 }
 
-function Search({navigation}){
-  let [find, setFind] = useState('') // Menerima hasil submit form 
-  let [form, setForm] = useState('') // adalah nilai realtime dari form 
-  let [found, SetFound] = useState(foundBasic) // Tempan menyimpan json hasil search
+function Search(){
+  // https://developer.themoviedb.org/reference/search-movie
+  // ref: https://github.com/toyamarodrigo/rn-movieapp/blob/master/src/api/movies.js
+  // ref bentuk link: https://github.com/toyamarodrigo/rn-movieapp/blob/master/src/api/movies.js
+  let [find, setFind] = useState('') // State penerima perubahan submit, dan memberikan aba-aba
+  let [found, setFound] = useState(foundBasic) // State yang akan menerima hasil search!
+  let [form, setForm] = useState('') // State untuk form
 
-useEffect(() => {
-  fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=es-ES&query=${find}`)
-  .then(response => response.json())
-  .then(response => {SetFound(response.results)})
-  .catch(err => console.log(err))
-}, [find])
+    // Cari Movie disaat state berubah
+    useEffect(() => {
+      fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=es-ES&query=${find}`)
+      .then(response => response.json())
+      .then(response => {setFound(response.results)})
+      .catch(err => console.error(err));
+    }, [find]);
+
+    console.log(found)
 
   return(
-     <ScrollView showsVerticalScrollIndicator={true}>
+    <ScrollView showsVerticalScrollIndicator={true}>
     <View>
     <TextInput
         style={styles.input}
@@ -103,18 +107,32 @@ useEffect(() => {
   )
 }
 
-function Favorite({navigation}){
-  return(
-    <View>
-      <Text>Halo home</Text>
-    </View>
-  )
-}
-
-
 function App(){
+  let [fav, setFav] = useState([])
+
+  console.log(`Dari App  ${fav.map((item) => item.title)}`)
+
+  function Favorite(){
+    return(
+      <ScrollView showsVerticalScrollIndicator={true}>
+    <View>
+      {fav.map((item) => (
+
+      <View key={item.title}>
+        <Text>======================= Title {item.title} ==================</Text>
+      <Text>title: {item.title}</Text>
+      <Text>overview: {item.overview}</Text>
+      </View>
+
+      ))}
+    </View>
+    </ScrollView>
+    )
+  }
+
   return(
-    <Tab.Navigator>
+    
+   <Tab.Navigator>
 
      <Tab.Screen
       name="Home"
@@ -127,7 +145,7 @@ function App(){
 
 {() => (<Stack.Navigator initialRouteName="Home">
   <Stack.Screen name="Home" component={Home}/>
-  <Stack.Screen name="MovieDetail" component={MovieDetail} />
+  <Stack.Screen name="MovieDetail" component={MovieDetail} initialParams={{fav: fav, setFav: setFav}} />
   </Stack.Navigator>)
   }
 
@@ -137,18 +155,23 @@ function App(){
         tabBarIcon: ({ color }) => (
           <Feather name="search" size={28} color={color} />
         ),
-        headerShown: false,
-      }}/>
+        headerShown: true,
+      }}
+    />
 
       <Tab.Screen name="Favorite" component={Favorite} options={{
         tabBarIcon: ({ color }) => (
           <Feather name="heart" size={28} color={color} />
         ),
         headerShown: false,
-      }}/>
+      }}
+    
+    />
 
-    </Tab.Navigator>
+
+   </Tab.Navigator>
   )
 }
 
 export default App
+
